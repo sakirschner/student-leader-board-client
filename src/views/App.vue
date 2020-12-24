@@ -70,6 +70,7 @@ export default {
 
   main {
     padding-top: 80px !important;
+    background-color: #fafafa
   }
 
   .navbar {
