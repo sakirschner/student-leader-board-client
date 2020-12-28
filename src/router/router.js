@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Settings from '../views/Settings'
+import Profile from '../views/Profile'
 
 Vue.use(VueRouter)
 
@@ -9,9 +9,9 @@ const router = new VueRouter({
     base: process.env.BASE_URL,
     routes: [
         {
-            path: '/settings',
-            name: 'settings',
-            component: Settings
+            path: '/profile',
+            name: 'profile',
+            component: Profile
         }
     ]
 })

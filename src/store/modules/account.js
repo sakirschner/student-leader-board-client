@@ -2,7 +2,8 @@ import axios from "axios"
 
 const state = () => ({
     account: {},
-    error: {}
+    error: {},
+    class: []
 })
 
 const actions = {
@@ -31,6 +32,19 @@ const actions = {
                 commit('setAccount', response);           
             })
         }
+    },
+    async getClass({commit, rootState}) {
+        let token = rootState.auth.token
+        if (token) {
+            await axios.get('http://127.0.0.1:8000/api/user/', {
+                headers: {
+                    'Authorization': token
+                }
+            })
+            .then((response) => {
+                commit('setClass', response);           
+            })
+        }
     }
 }
 
@@ -40,6 +54,9 @@ const mutations = {
     },
     setError(state, error) {
         state.error = error
+    },
+    setClass(state, response) {
+        state.class = response.data
     }
 }
 

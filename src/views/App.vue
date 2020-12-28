@@ -8,7 +8,7 @@
       </div>
       <v-spacer></v-spacer>
       <div v-if="isAuthenticated">
-        <router-link :to="{ name: 'settings' }" class="nav-link center-align">
+        <router-link :to="{ name: 'profile' }" class="nav-link center-align">
           <div :style="{ 'background-image': 'url(' + account.image + ')'}" class="avatar"></div>
           <span class="mr-2">{{account.user_name}}</span>
         </router-link>
@@ -38,7 +38,6 @@ export default {
     token: " "
   }),
   async created() {
-    console.log("here")
     await this.$store.dispatch('auth/getToken', null);
     await this.$store.dispatch('account/getAccount');
     this.token = this.$store.state.auth.token;
