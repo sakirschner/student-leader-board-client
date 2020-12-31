@@ -1,22 +1,75 @@
 <template>
-  <v-app>
-    <v-app-bar app color="cyan" dark class="navbar">
-      <div class="d-flex align-center">
-        <router-link to="/" class="nav-link">
-          <h2>Student Leader Board</h2>
+  <v-app class="mx-auto overflow-hidden" width="344">
+    <v-app-bar app color="cyan" dark>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer" v-if="isAuthenticated"></v-app-bar-nav-icon>
+      <v-toolbar-title class="d-flex align-center" style="margin: auto">
+        <router-link to="/" class="nav-link" style="display: contents">
+          <v-icon x-large color="white">mdi-school</v-icon> 
+            <h2 class="ml-1">Leader Board</h2>
         </router-link>
-      </div>
-      <v-spacer></v-spacer>
-      <div v-if="isAuthenticated">
+      </v-toolbar-title>
+      <div>
         <router-link :to="{ name: 'profile' }" class="nav-link center-align">
-          <div :style="{ 'background-image': 'url(' + account.image + ')'}" class="avatar"></div>
-          <span class="mr-2">{{account.user_name}}</span>
+          
         </router-link>
       </div>
     </v-app-bar>
 
+      <v-navigation-drawer
+        v-model="drawer"
+        absolute
+        temporary
+      >
+        <template v-slot:prepend>
+        <v-list-item> 
+          <v-list-item-avatar>
+            <router-link :to="{ name: 'profile' }" class="generic-avatar">
+              <div :style="{ 'background-image': 'url(' + account.image + ')'}" class="avatar" v-if="account.image"></div>
+              <v-avatar color="cyan" v-else-if="!account.image">
+                <v-icon dark size="30">mdi-account-circle</v-icon>
+              </v-avatar>
+            </router-link>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <router-link :to="{ name: 'profile' }" style="text-decoration: none">
+              <v-list-item-title style="color: rgba(0, 0, 0, 0.87) !important">{{account.first_name}} {{account.last_name}}</v-list-item-title>
+              <v-list-item-subtitle>{{account.user_name}}</v-list-item-subtitle>
+            </router-link>
+          </v-list-item-content>
+        </v-list-item>
+      </template>
+
+        <v-list
+          nav
+          dense
+        >
+          <v-list-item-group
+            v-model="group"
+            active-class="deep-purple--text text--accent-4"
+          >
+          <router-link :to="{ name: 'home' }" style="text-decoration: none">
+          <v-list-item>
+              <v-list-item-icon>
+                <v-icon>mdi-chart-bar</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Leader Board</v-list-item-title>
+          </v-list-item>
+          </router-link>
+
+          <router-link :to="{ name: 'profile' }" style="text-decoration: none">
+          <v-list-item>
+            <v-list-item-icon>
+              <v-icon>mdi-account</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Profile</v-list-item-title>
+          </v-list-item>
+          </router-link>
+        </v-list-item-group>
+      </v-list>
+    </v-navigation-drawer>
+
     <v-main>
-      <LogIn v-if="!isAuthenticated" @submitted="onRegister"/>
+      <LogIn v-if="!isAuthenticated && !hasToken" @submitted="onRegister"/>
       <router-view />
     </v-main>
   </v-app>
@@ -24,6 +77,8 @@
 
 <script>
 import LogIn from "../components/LogIn";
+
+import axios from "axios"
 
 export default {
   name: "App",
@@ -35,27 +90,48 @@ export default {
   data: () => ({
     isAuthenticated: false,
     account: {},
-    token: " "
+    token: " ",
+    drawer: false,
+    group: null,
+    hasToken: false
   }),
   async created() {
+    let tokenExists = sessionStorage.getItem('token')
+    if (tokenExists) {
+      this.hasToken = true
+    }
     await this.$store.dispatch('auth/getToken', null);
-    await this.$store.dispatch('account/getAccount');
     this.token = this.$store.state.auth.token;
+    await this.getAccount();
     this.isAuthenticated = this.$store.state.auth.isAuthenticated;
-    this.account = this.$store.state.account.account;
   },
-  // beforeMount() {
-  //   this.token = this.$store.state.auth.token;
-  //   this.isAuthenticated = this.$store.state.auth.isAuthenticated;
-  // },
-  // Mounted() {
-  //   this.account = this.$store.state.account.account;
-  // },
+  watch: {
+    group () {
+      this.drawer = false
+    }
+  },
   methods: {
-    onRegister() {
-      this.isAuthenticated = this.$store.state.auth.isAuthenticated;
-      this.account = this.$store.state.account.account;      
+    async onRegister(fromRegister) {
+      console.log("in app on register")
+      console.log(fromRegister)
       this.token = this.$store.state.auth.token;
+      await this.getAccount();  
+      this.isAuthenticated = this.$store.state.auth.isAuthenticated; 
+      if (fromRegister === true) {
+        this.$router.push({ name: 'profile' })
+      }
+    },
+    async getAccount() {
+      if (this.token) {
+          await axios.get('http://127.0.0.1:8000/api/user/me/', {
+              headers: {
+                  'Authorization': this.token
+              }
+          })
+          .then((response) => {
+              this.account = response.data           
+          })
+      }
     }
   }
 };
@@ -68,8 +144,15 @@ export default {
   }
 
   main {
-    padding-top: 80px !important;
     background-color: #fafafa
+  }
+
+  a {
+    text-decoration: none
+  }
+
+  .generic-avatar {
+    margin: -4px
   }
 
   .navbar {

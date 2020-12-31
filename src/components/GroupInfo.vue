@@ -1,45 +1,41 @@
 <template>
   <v-card>
     <v-card-title>Group Info</v-card-title>
-    <v-card-subtitle><v-icon>mdi-account-multiple</v-icon> {{groups[0].name}}</v-card-subtitle>
-    <v-card-text class="pl-0 pr-0">
-        <div v-for="group in groups" :key="group.id" class="group-list">
-            <div v-for="student in group.students" :key="student.id" class="student">
-                <v-row class="avatar-row">
-                <v-img
-                    :src=student.image
-                    class="group-avatar"
-                />
-                </v-row>
-                <v-icon small>mdi-account</v-icon>
-                 {{student.first_name}} {{student.last_name}}
-                <v-spacer />
-                <v-icon>mdi-account-box-outline</v-icon>
-                 {{student.user_name}}
-                <v-spacer />
-                <v-icon>mdi-trophy-outline</v-icon>
-                Level: {{student.level}}
+    <v-card-subtitle style="margin-bottom: -10px">
+        <v-icon>mdi-account-multiple</v-icon> 
+        <span class="subtitle-1"> {{group.name}}</span>
+    </v-card-subtitle>
+    <v-card-text class="group-list">
+        <div v-for="student in groupWithPoints" :key="student.id" class="student">
+            <div class="mb-1">
+            <v-icon small>mdi-account</v-icon>
+                {{student.first_name}} {{student.last_name}}
             </div>
+            <v-row class="avatar-row">
+            <v-img
+                :src=student.image
+                class="group-avatar"
+            />
+            </v-row>
+            
+            <v-icon small>mdi-account-box-outline</v-icon>
+                {{student.user_name}}
+            <v-spacer />
+            <v-chip class="ma-1" color="#00B6EC" text-color="white">
+            <v-icon small>mdi-trophy-outline</v-icon>
+             <span class="pl-1">{{student.points}} Points</span>
+            </v-chip>
         </div>
     </v-card-text>
     </v-card>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
 export default {
-    data: () => ({
-
-    }),
-    async created() {
-        await this.$store.dispatch('group/getAllGroups');
+    props: {
+        group: Object,
+        groupWithPoints: Array
     },
-    computed: {
-        ...mapGetters('group', {
-            groups: 'studentGroup'
-        })
-    }
 }
 </script>
 
@@ -69,7 +65,7 @@ export default {
     }
 
     .student {
-        margin: 10px;
-        text-align: center;
+        margin: 10px 0px;
+        text-align:center
     }
 </style>

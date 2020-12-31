@@ -130,6 +130,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     data: () => ({
         dialog: true,
@@ -183,48 +184,59 @@ export default {
         }
     },
     methods: {
-        onRegister() {
-            this.$emit('submitted')
+        onRegister(fromRegister) {
+            console.log("onRegister")
+            console.log(fromRegister)
+            this.$emit('submitted', fromRegister)
         },
         async validate() {
             this.logInError = false;
             this.registerError = false;
-            this.$store.commit('account/setError', null)
             this.$store.commit('auth/setError', null)
             if (this.$refs.loginForm.validate()) {
-                await this.$store.dispatch('auth/getToken', 
-                    {
-                        email: this.loginEmail, 
-                        password: this.loginPassword
-                    }
-                );
-                if (this.$store.state.auth.error) {
+                const payload ={
+                    email: this.loginEmail, 
+                    password: this.loginPassword
+                }
+                const fromRegister = false;
+                await this.logIn(payload, fromRegister);
+            } else if (this.$refs.registerForm.validate()) {
+                await this.registerAccount();
+            }
+        },
+        async logIn(payload, fromRegister) {
+            console.log("in login")
+            console.log(fromRegister)
+            await this.$store.dispatch('auth/getToken', payload);
+            if (this.$store.state.auth.error) {
+                if (this.$store.state.auth.error.message == "Network Error") {
+                    window.alert(this.$store.state.auth.error.message + " - Please contact support")
+                } else {
                     this.logInError = true;
                 }
-                await this.$store.dispatch('account/getAccount');
-                await this.onRegister();
-            } else if (this.$refs.registerForm.validate()) {
-                await this.$store.dispatch('account/registerAccount',
-                    {
-                        email: this.email,
-                        password: this.password,
-                        first_name: this.firstName.substring(0,1).toUpperCase() + this.firstName.substring(1).toLowerCase(),
-                        last_name: this.lastName.substring(0,1).toUpperCase() + this.lastName.substring(1).toLowerCase(),
-                    }
-                )
-                if (this.$store.state.account.error) {
-                    this.registerError = true;
-                    return null;
+            }
+            await this.onRegister(fromRegister);
+        },
+        async registerAccount() {
+            let payload = {
+                    email: this.email,
+                    password: this.password,
+                    first_name: this.firstName.substring(0,1).toUpperCase() + this.firstName.substring(1).toLowerCase(),
+                    last_name: this.lastName.substring(0,1).toUpperCase() + this.lastName.substring(1).toLowerCase(),
                 }
-                await this.$store.dispatch('auth/getToken', 
-                    {
-                        email: this.email, 
+            await axios.post('http://127.0.0.1:8000/api/user/create/', payload)
+                .then(() => {
+                    payload = {
+                        email: this.email,
                         password: this.password
                     }
-                );
-                await this.$store.dispatch('account/getAccount');
-                await this.onRegister();
-            }
+                    const fromRegister = true
+                    this.logIn(payload, fromRegister)                
+                })
+                .catch(() => {
+                    this.registerError = true
+                }
+            )
         },
         reset() {
             this.$refs.form.reset();

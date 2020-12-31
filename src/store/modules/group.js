@@ -7,6 +7,7 @@ const state  = () => ({
 
 const getters = {
     studentGroup: (state, getters, rootState) => {
+        // const achievements = getters.groupDetails;
         return state.groups.map(() => {
             let foundGroup = null
             state.groups.forEach((group) => {
@@ -20,7 +21,8 @@ const getters = {
                 id: foundGroup.id,
                 name: foundGroup.name,
                 rewards: foundGroup.rewards,
-                students: foundGroup.students
+                students: foundGroup.students,
+                // achievements: achievements
             }
         })
     },

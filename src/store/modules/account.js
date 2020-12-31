@@ -7,23 +7,23 @@ const state = () => ({
 })
 
 const actions = {
-    async registerAccount({commit}, payload) {
-        await axios.post('http://127.0.0.1:8000/api/user/create/', payload)
+    registerAccount({commit}, payload) {
+        axios.post('http://127.0.0.1:8000/api/user/create/', payload)
             .then((response) => {
                 commit('setAccount', response)
                 commit('auth/setAuthentication', null, {root: true})
             }
         )
             .catch((error) => {
-                console.log("here")
                 commit('setError', error)
             }
         )
     },
-    async getAccount({commit, rootState}) {
+    getAccount({commit, rootState}) {
+        console.log("getting account")
         let token = rootState.auth.token
         if (token) {
-            await axios.get('http://127.0.0.1:8000/api/user/me/', {
+            axios.get('http://127.0.0.1:8000/api/user/me/', {
                 headers: {
                     'Authorization': token
                 }
@@ -31,12 +31,15 @@ const actions = {
             .then((response) => {
                 commit('setAccount', response);           
             })
+            .catch((error) => {
+                commit('auth/setError', error, { root:true })
+            })
         }
     },
-    async getClass({commit, rootState}) {
+    getClass({commit, rootState}) {
         let token = rootState.auth.token
         if (token) {
-            await axios.get('http://127.0.0.1:8000/api/user/', {
+            axios.get('http://127.0.0.1:8000/api/user/', {
                 headers: {
                     'Authorization': token
                 }

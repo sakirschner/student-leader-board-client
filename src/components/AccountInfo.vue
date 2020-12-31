@@ -10,7 +10,11 @@
                         height="200px"
                         class="rounded-circle avatar"
                         style="position: relative"
+                        v-if="account.image"
                     />
+                    <v-avatar color="cyan" size="200" v-if="!account.image" class="avatar">
+                        <v-icon dark size="200">mdi-account-circle</v-icon>
+                    </v-avatar>
                 </v-row>
                 <br>
                     <v-icon>mdi-account</v-icon>
@@ -28,9 +32,7 @@
                     </v-btn>
             </v-card-text>
         </v-card>
-    </div>    
-    <!-- If edit is clicked -->
-    
+    </div>        
 </template>
 
 <script>
@@ -38,9 +40,13 @@ export default {
     props: {
         account: Object
     },
-    data: () => ({
-
-    }),
+    // data: () => ({
+    //     account: {}
+    // }),
+    // async created() {
+    //     console.log("Info is created")
+    //     await this.getAccount();
+    // },
     methods: {
         onEdit() {
             this.$emit('clicked')
@@ -60,5 +66,4 @@ export default {
             0px 4px 5px 0px rgba(0, 0, 0, 0.14), 
             0px 1px 10px 0px rgba(0, 0, 0, 0.12); 
     }
-
 </style>

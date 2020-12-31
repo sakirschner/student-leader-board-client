@@ -4,17 +4,22 @@
             <v-row>
                 <v-col cols="12" md="4">
                     <AccountInfo 
-                        :account="account"
                         @clicked="onEditClick"
+                        :account="account"
                     />
                 </v-col>
                 <v-col cols="12" md="8">
-                    <GroupInfo />
+                    <GroupInfo 
+                        :group="group[0]"
+                        :groupWithPoints="groupWithPoints"
+                    />
                 </v-col>
             </v-row>
             <v-row>
                 <GroupStats 
-                    :stats="groupDetails"
+                    :group="group[0]"
+                    :stats="achievements"
+                    :totalPoints="totalPoints"
                 />
             </v-row>
         </v-container>
@@ -29,7 +34,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import axios from 'axios';
 
 import GroupInfo from '../components/GroupInfo';
 import AccountInfo from '../components/AccountInfo';
@@ -45,25 +50,119 @@ export default {
     },
     data: () => ({
         account: {},
+        group: [],
+        achievements: [],
         edit: false,
+        totalPoints: 0,
+        groupWithPoints: {},
+        isFetching: true
     }),
     async created() {
-        await this.$store.dispatch('account/getAccount');
-        this.account = this.$store.state.account.account;
-        await this.$store.dispatch('group/getAllAchievements');
-    },
-    computed: {
-        ...mapGetters('group', {
-            groupDetails: 'groupDetails'
-        })
+        await this.getData();
     },
     methods: {
+        async getData() {
+            await this.getAccount();
+        },
+        async getAccount() {
+            let token = this.$store.state.auth.token
+            if (token) {
+                await axios.get('http://127.0.0.1:8000/api/user/me/', {
+                    headers: {
+                        'Authorization': token
+                    }
+                })
+                .then((response) => {
+                    this.account = response.data   
+                    this.getGroup();      
+                })
+            }
+        },
+        async getGroup() {
+            let token = this.$store.state.auth.token
+            if (token) {
+                await axios.get(`http://127.0.0.1:8000/api/group/groups/?students=${this.account.id}`, {
+                    headers: {
+                        'Authorization': token
+                    }
+                })
+                .then((response) => {
+                    this.group = response.data 
+                    this.getAchievements();          
+                })
+            }
+        },
+        async getAchievements() {
+            let studentIds = []
+            this.group[0].students.forEach((student) => {
+                studentIds.push(student.id)
+            })
+            let token = this.$store.state.auth.token
+            if (token) {
+                await axios.get(`http://127.0.0.1:8000/api/achievement/studentachievements/?student_in=${studentIds}`, {
+                    headers: {
+                        'Authorization': token
+                    }
+                })
+                .then((response) => {
+                    response.data.forEach((achievement) => {
+                        achievement.created_at = new Date(achievement.created_at).toLocaleDateString() + " " + new Date(achievement.created_at).toLocaleTimeString();
+                    })
+                    this.achievements = response.data  
+                    this.setGroupWithPoints();         
+                })
+            }
+        },
+        // setData() {
+            // console.log("here")
+            // await this.$store.dispatch('account/getAccount');
+            // console.log("here2")
+            // this.setAccount();
+            // console.log("here3")
+            // await this.$store.dispatch('group/getAllGroups');
+            // console.log("here4")
+            // await this.$store.dispatch('group/getAllAchievements');
+            // console.log("here5")
+            // 
+        //     console.log("here6")
+        //     this.setGroupWithPoints();
+        //     console.log("here7")
+        //     this.doneFetching();
+        //     console.log("here8")
+        // },
+        setGroupWithPoints() {
+            let newGroup = []
+            this.group[0].students.forEach((student) => { 
+                let newStudent = {
+                    first_name: student.first_name,
+                    last_name: student.last_name,
+                    email: student.email,
+                    id: student.id,
+                    image: student.image,
+                    points: 0,
+                    user_name: student.user_name
+                }
+                this.achievements.forEach((stat) => {       
+                    if (stat.student.id === student.id) {
+                        newStudent.points += stat.achievement.points
+                    }
+                })
+                newGroup.push(newStudent)
+            })
+            this.groupWithPoints = newGroup;
+            this.setTotalPoints();
+        },
+        setTotalPoints() {
+            this.achievements.forEach((stat) => {
+                this.totalPoints += stat.achievement.points
+            })
+        },
         onEditClick() {
             this.edit = !this.edit
         },
         onCancelClick() {
             this.edit = !this.edit
-        }
+        },
     }
 }
 </script>

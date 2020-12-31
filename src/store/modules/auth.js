@@ -3,15 +3,16 @@ import axios from 'axios'
 const state = () => ({
     token: "",
     isAuthenticated: false,
-    error: {}
+    error: null
 })
 
 const actions = {
     async getToken({ commit }, payload) {
         const sessionToken = sessionStorage.getItem('token');
         if (sessionToken) {
-            commit('setTokenFromSession', sessionToken);
-            commit('setAuthentication')
+            await commit('setTokenFromSession', sessionToken);
+            await commit('setAuthentication')
+
         } else {
             await axios.post('http://127.0.0.1:8000/api/user/token/', payload)
                 .then((response) => {
@@ -36,7 +37,9 @@ const mutations = {
         state.token = sessionToken;
     },
     setAuthentication(state) {
-        state.isAuthenticated = true;
+        if (!state.error) {
+            state.isAuthenticated = true;
+        }
     },
     setError(state, error) {
         state.error = error;
