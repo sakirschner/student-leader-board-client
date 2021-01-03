@@ -20,7 +20,7 @@
                     </v-col>
                     <v-col cols="12" md="3">
                         <v-card
-                            color="#00B6EC"
+                            color="#00aeff"
                             dark
                             elevation="0"
                         >

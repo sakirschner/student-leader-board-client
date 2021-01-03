@@ -185,8 +185,6 @@ export default {
     },
     methods: {
         onRegister(fromRegister) {
-            console.log("onRegister")
-            console.log(fromRegister)
             this.$emit('submitted', fromRegister)
         },
         async validate() {
@@ -205,8 +203,7 @@ export default {
             }
         },
         async logIn(payload, fromRegister) {
-            console.log("in login")
-            console.log(fromRegister)
+
             await this.$store.dispatch('auth/getToken', payload);
             if (this.$store.state.auth.error) {
                 if (this.$store.state.auth.error.message == "Network Error") {

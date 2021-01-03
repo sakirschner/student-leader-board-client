@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-card>
+        <v-card class="card">
             <v-card-title>Account Info</v-card-title>
             <v-card-text>
                 <v-row class="avatar-row">
@@ -62,8 +62,12 @@ export default {
 
     .avatar {
         flex: 0 0 auto !important;
-        box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 
+        /* box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 
             0px 4px 5px 0px rgba(0, 0, 0, 0.14), 
-            0px 1px 10px 0px rgba(0, 0, 0, 0.12); 
+            0px 1px 10px 0px rgba(0, 0, 0, 0.12);  */
     }
+
+    .card {
+        box-shadow: none !important;
+    } 
 </style>

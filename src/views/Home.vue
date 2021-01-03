@@ -1,6 +1,10 @@
 <template>
     <v-container>
-        <LeaderBoard :groups=groups :key="groups.changes" />
+        <LeaderBoard 
+            :groups=groups 
+            :key="groups.changes" 
+            v-if="groups.groups"
+        />
     </v-container>
 </template>
 

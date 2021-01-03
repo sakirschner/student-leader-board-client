@@ -169,4 +169,9 @@ export default {
 
 <style>
 
+  .v-card {
+    box-shadow: none !important;
+    border-radius: 15px !important;
+  }
+
 </style>

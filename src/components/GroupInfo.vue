@@ -21,7 +21,7 @@
             <v-icon small>mdi-account-box-outline</v-icon>
                 {{student.user_name}}
             <v-spacer />
-            <v-chip class="ma-1" color="#00B6EC" text-color="white">
+            <v-chip class="ma-1" color="#00aeff" text-color="white">
             <v-icon small>mdi-trophy-outline</v-icon>
              <span class="pl-1">{{student.points}} Points</span>
             </v-chip>
@@ -46,9 +46,9 @@ export default {
         height: 100px;
         border-radius: 50px;
         background-clip: padding-box;
-        box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 
+        /* box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 
         0px 4px 5px 0px rgba(0, 0, 0, 0.14), 
-        0px 1px 10px 0px rgba(0, 0, 0, 0.12); 
+        0px 1px 10px 0px rgba(0, 0, 0, 0.12);  */
         -webkit-border-radius: 50px;
         -webkit-background-clip: padding-box;
         -moz-border-radius: 50px;
