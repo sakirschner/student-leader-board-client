@@ -2,7 +2,7 @@
   <v-app class="mx-auto overflow-hidden" width="344">
     <v-app-bar app color="#e5f7ff" dark flat>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" v-if="isAuthenticated" color="#00aeff"></v-app-bar-nav-icon>
-      <v-toolbar-title class="d-flex align-center" style="margin: auto">
+      <v-toolbar-title class="d-flex align-center logo" style="margin: auto">
         <router-link to="/" class="nav-link" style="display: contents">
           <v-icon x-large color="#00aeff">mdi-school</v-icon> 
             <h2 class="ml-1" style="color:#00aeff">LeaderBoard</h2>
@@ -25,7 +25,7 @@
           <v-list-item-avatar>
             <router-link :to="{ name: 'profile' }" class="generic-avatar">
               <div :style="{ 'background-image': 'url(' + account.image + ')'}" class="avatar" v-if="account.image"></div>
-              <v-avatar color="cyan" v-else-if="!account.image">
+              <v-avatar color="rgb(0, 174, 255)" v-else-if="!account.image">
                 <v-icon dark size="30">mdi-account-circle</v-icon>
               </v-avatar>
             </router-link>
@@ -148,6 +148,11 @@ export default {
 
   a {
     text-decoration: none
+  }
+
+  .logo {
+    padding-left: -20px !important;
+    padding-right: 50px !important;
   }
 
   .generic-avatar {

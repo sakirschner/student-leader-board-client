@@ -11,6 +11,7 @@
                     <v-tab-item>
                         <v-card class="px-4">
                             <v-card-text>
+                                <GoogleLogin>Login</GoogleLogin>
                                 <v-form ref="loginForm" v-model="valid" lazy-validation>
                                     <v-row>
                                         <v-col cols="12">
@@ -131,7 +132,12 @@
 
 <script>
 import axios from 'axios';
+import GoogleLogin from 'vue-google-login';
+
 export default {
+    components: {
+        GoogleLogin   
+    },
     data: () => ({
         dialog: true,
         logInError: false,
@@ -244,3 +250,8 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+
+
+</style>

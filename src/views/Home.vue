@@ -1,10 +1,30 @@
 <template>
     <v-container>
-        <LeaderBoard 
-            :groups=groups 
-            :key="groups.changes" 
-            v-if="groups.groups"
-        />
+        <v-row>
+            <v-col cols="12" md="8">
+                <LeaderBoard 
+                    :groups=groups 
+                    :key="groups.changes" 
+                    v-if="groups.groups"
+                />
+            </v-col>
+            <v-col>
+                <LeaderBoardList
+                    :groups=groups 
+                    :key="groups.changes" 
+                    v-if="groups.groups" 
+                />
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col cols="12" md="12">
+                <AchievementList 
+                    :groups=groups
+                    :key="groups.changes" 
+                    v-if="groups.groups"
+                />
+            </v-col>
+        </v-row>
     </v-container>
 </template>
 
@@ -12,19 +32,24 @@
 import axios from 'axios'
 
 import LeaderBoard from '../components/LeaderBoard'
+import LeaderBoardList from '../components/LeaderBoardList'
+import AchievementList from '../components/AchievementList'
 
 export default {
     components: {
-        LeaderBoard
+        LeaderBoard,
+        LeaderBoardList,
+        AchievementList
     },
     data: () => ({
         groups: {},
-        achievements: []
+        achievements: [],
+        stats: [],
+        completed: false,
     }),
     async created() {
         await this.getData();
         await this.getAchievements();
-        
     },
     methods: {
        async getData() {
@@ -47,7 +72,7 @@ export default {
                 })
             }
         },
-        async getAchievements() {
+        getAchievements() {
             const token = this.$store.state.auth.token
             this.groups.groups.forEach((group) => {
                 let studentIds = []
@@ -69,6 +94,7 @@ export default {
                         })
                     let groupAchievements = {
                         groupId: group.id,
+                        groupName: group.name,
                         totalPoints: points,
                         achievements: response.data
                     }
@@ -76,6 +102,7 @@ export default {
                     this.compareGroupPoints()
                 })}
             })
+            this.completed = true;
         },
         async compareGroupPoints() {
             this.groups.groups.forEach((group) => {
@@ -104,16 +131,20 @@ export default {
                         if (response.data.id === group.id) {
                             this.groups.groups[index] = response.data
                             this.groups.changes ++
-                            // this.$forceUpdate();
                         }
                      })
                 })
             }
-        }
+        },
     }
 }
+
 </script>
 
 <style>
-
+    @media (min-width: 960px){
+        .container {
+            max-width: 1050px !important;
+        }
+    }
 </style>

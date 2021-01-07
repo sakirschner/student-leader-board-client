@@ -12,7 +12,7 @@
                         style="position: relative"
                         v-if="account.image"
                     />
-                    <v-avatar color="cyan" size="200" v-if="!account.image" class="avatar">
+                    <v-avatar color="rgb(0, 174, 255)" size="200" v-if="!account.image" class="avatar">
                         <v-icon dark size="200">mdi-account-circle</v-icon>
                     </v-avatar>
                 </v-row>

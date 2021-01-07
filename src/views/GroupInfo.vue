@@ -1,100 +1,61 @@
- <template>
-    <div>
-        <v-container v-if="!edit">
-            <v-row>
-                <v-col cols="12" md="4">
-                    <AccountInfo 
-                        @clicked="onEditClick"
-                        :account="account"
-                    />
-                </v-col>
-                <v-col cols="12" md="8">
-                    <GroupInfo 
-                        :group="group[0]"
-                        :groupWithPoints="groupWithPoints"
-                    />
-                </v-col>
-            </v-row>
-            <v-row>
-                <GroupStats 
-                    :group="group[0]"
-                    :stats="achievements"
-                    :totalPoints="totalPoints"
+<template>
+    <v-container>
+        <v-row>
+            <v-col cols="12" md="12">
+                <GroupInfo
+                    :group="group"
+                    :groupWithPoints="groupWithPoints"
                 />
-            </v-row>
-        </v-container>
-
-        <v-container v-if="edit">
-            <EditAccount
-                :account="account"
-                @clicked="onCancelClick"
+            </v-col>
+        </v-row>
+        <v-row>
+            <GroupStats
+                :group="group"
+                :stats="achievements"
+                :totalPoints="totalPoints"
             />
-        </v-container>
-    </div>
+        </v-row>
+  </v-container>
 </template>
 
 <script>
 import axios from 'axios';
 
-import GroupInfo from '../components/GroupInfo';
-import AccountInfo from '../components/AccountInfo';
-import EditAccount from '../components/EditAccount';
-import GroupStats from '../components/GroupStats';
+import GroupInfo from '../components/GroupInfo'
+import GroupStats from '../components/GroupStats.vue';
 
 export default {
     components: {
-        AccountInfo,
         GroupInfo,
-        EditAccount,
         GroupStats
     },
     data: () => ({
-        account: {},
-        group: [],
+        group: {},
+        groupWithPoints: [],
         achievements: [],
-        edit: false,
-        totalPoints: 0,
-        groupWithPoints: {},
-        isFetching: true
+        totalPoints: 0
     }),
     async created() {
-        await this.getData();
+        await this.getGroup();
     },
     methods: {
-        async getData() {
-            await this.getAccount();
-        },
-        async getAccount() {
-            let token = this.$store.state.auth.token
-            if (token) {
-                await axios.get('http://127.0.0.1:8000/api/user/me/', {
-                    headers: {
-                        'Authorization': token
-                    }
-                })
-                .then((response) => {
-                    this.account = response.data   
-                    this.getGroup();      
-                })
-            }
-        },
         async getGroup() {
             let token = this.$store.state.auth.token
             if (token) {
-                await axios.get(`http://127.0.0.1:8000/api/group/groups/?students=${this.account.id}`, {
+                await axios.get(`http://127.0.0.1:8000/api/group/groups/${this.$route.params.id}/`, {
                     headers: {
                         'Authorization': token
                     }
                 })
                 .then((response) => {
-                    this.group = response.data 
-                    this.getAchievements();          
+                    this.group = response.data;
+                    this.getAchievements();
                 })
             }
         },
         async getAchievements() {
             let studentIds = []
-            this.group[0].students.forEach((student) => {
+            this.group.students.forEach((student) => {
                 studentIds.push(student.id)
             })
             let token = this.$store.state.auth.token
@@ -115,7 +76,7 @@ export default {
         },
         setGroupWithPoints() {
             let newGroup = []
-            this.group[0].students.forEach((student) => { 
+            this.group.students.forEach((student) => { 
                 let newStudent = {
                     first_name: student.first_name,
                     last_name: student.last_name,
@@ -140,21 +101,10 @@ export default {
                 this.totalPoints += stat.achievement.points
             })
         },
-        onEditClick() {
-            this.edit = !this.edit
-        },
-        onCancelClick() {
-            this.edit = !this.edit
-        },
     }
 }
 </script>
 
 <style>
-
-  .v-card {
-    box-shadow: none !important;
-    border-radius: 15px !important;
-  }
 
 </style>

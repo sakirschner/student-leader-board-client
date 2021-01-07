@@ -15,7 +15,11 @@
             <v-img
                 :src=student.image
                 class="group-avatar"
+                v-if="student.image"
             />
+            <v-avatar color="rgb(0, 174, 255)" size="100" v-if="!student.image">
+                <v-icon dark size="75">mdi-account-circle</v-icon>
+            </v-avatar>
             </v-row>
             
             <v-icon small>mdi-account-box-outline</v-icon>
