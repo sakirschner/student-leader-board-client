@@ -28,6 +28,7 @@
             <EditAccount
                 :account="account"
                 @clicked="onCancelClick"
+                @submitted="onSaveClick"
             />
         </v-container>
     </div>
@@ -146,6 +147,10 @@ export default {
         onCancelClick() {
             this.edit = !this.edit
         },
+        onSaveClick() {
+            this.edit = !this.edit
+            this.$router.go()
+        }
     }
 }
 </script>

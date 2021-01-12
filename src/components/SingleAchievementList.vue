@@ -55,14 +55,15 @@
 </template>
 
 <script>
-import axios from "axios";
+// import axios from "axios";
 
 export default {
   props: {
-    groups: Array,
+    achievements: Array,
+    groups: Array
   },
   mounted() {
-    this.getAllAchievements();
+    this.organizeAchievements();
   },
   data: () => ({
     stats: [],
@@ -83,41 +84,29 @@ export default {
   watch: {
     options: {
       handler() {
-        this.getAllAchievements();
+        this.organizeAchievements();
       },
       deep: true,
     },
   },
   methods: {
-    async getAllAchievements() {
-      this.loading = true;
-      let token = this.$store.state.auth.token;
-      if (token) {
-        axios
-          .get("http://127.0.0.1:8000/api/achievement/studentachievements/", {
-            headers: {
-              Authorization: token,
-            },
-          })
-          .then((response) => {
-            this.stats = response.data;
-            this.stats.forEach((stat, index) => {
-              this.stats[index].created_at =
-                new Date(stat.created_at).toLocaleDateString() +
-                " " +
-                new Date(stat.created_at).toLocaleTimeString();
-              this.$props.groups.groups.forEach((group) => {
-                group.students.forEach((student) => {
-                  if (student.id === stat.student.id) {
-                    this.stats[index].groupName = group.name;
-                    this.stats[index].groupId = group.id;
-                  }
-                });
-              });
-            });
-            this.loading = false;
+    async organizeAchievements() {
+    this.stats = this.$props.achievements
+      this.stats.forEach((stat, index) => {
+        this.stats[index].created_at =
+          new Date(stat.created_at).toLocaleDateString() +
+          " " +
+          new Date(stat.created_at).toLocaleTimeString();
+        this.$props.groups.groups.forEach((group) => {
+          group.students.forEach((student) => {
+            if (student.id === stat.student.id) {
+              this.stats[index].groupName = group.name;
+              this.stats[index].groupId = group.id;
+            }
           });
-      }
+        });
+      });
+      this.loading = false;
     },
   },
 };

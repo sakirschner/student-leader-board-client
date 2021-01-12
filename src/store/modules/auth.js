@@ -41,6 +41,9 @@ const mutations = {
             state.isAuthenticated = true;
         }
     },
+    setAuthenticationFalse(state) {
+        state.isAuthenticated = false;
+    },
     setError(state, error) {
         state.error = error;
     }

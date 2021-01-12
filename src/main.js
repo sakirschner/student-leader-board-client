@@ -3,15 +3,21 @@ import App from '../src/views/App';
 import vuetify from './plugins/vuetify';
 import store from './store';
 import router from './router/router';
-import GAuth from 'vue-google-oauth2';
+import VueGapi from 'vue-gapi'
+import GoogleAuth from 'vue-google-oauth2'
 
 const gauthOption = {
-  clientId: 'CLIENT_ID.apps.googleusercontent.com',
+  clientId: '511484330482-6jk4r4f37masmgt6gtjvooirc0a3jvh7.apps.googleusercontent.com',
   scope: 'profile email',
   prompt: 'select_account'
 }
 
-Vue.use(GAuth, gauthOption)
+Vue.use(GoogleAuth, gauthOption)
+
+Vue.use(VueGapi, {
+  clientId: '511484330482-6jk4r4f37masmgt6gtjvooirc0a3jvh7.apps.googleusercontent.com',
+  scope: 'email',
+})
 
 Vue.config.productionTip = false
 
