@@ -17,7 +17,7 @@ const router = new VueRouter({
             component: Profile
         },
         {
-            path: '/',
+            path: '/leaderboard',
             name: 'home',
             component: Home
         },
@@ -30,7 +30,7 @@ const router = new VueRouter({
             path: '/stats',
             name: 'stats',
             component: Stats
-        }
+        },
     ]
 })
 

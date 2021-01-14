@@ -52,11 +52,11 @@
               <v-text-field v-model="account.last_name" label="Last Name" />
             </v-col>
           </v-row>
-          <v-row>
+          <!-- <v-row>
             <v-col cols="12" md="12">
               <v-text-field v-model="account.email" label="Email" />
             </v-col>
-          </v-row>
+          </v-row> -->
           <v-row>
             <v-col cols="12" md="12">
               <v-text-field v-model="account.user_name" label="Username" />
@@ -133,7 +133,7 @@ export default {
       let payload = {
         first_name: this.$props.account.first_name,
         last_name: this.$props.account.last_name,
-        email: this.$props.account.email,
+        // email: this.$props.account.email,
         user_name: this.$props.account.user_name,
       };
       if (token) {

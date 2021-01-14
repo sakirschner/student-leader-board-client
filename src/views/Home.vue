@@ -1,31 +1,40 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col cols="12" md="8">
-        <LeaderBoard
-          :groups="groups"
-          :key="groups.changes"
-          v-if="groups.groups"
-        />
-      </v-col>
-      <v-col>
-        <LeaderBoardList
-          :groups="groups"
-          :key="groups.changes"
-          v-if="groups.groups"
-        />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12" md="12">
-        <AchievementList
-          :groups="groups"
-          :key="groups.changes"
-          v-if="groups.groups"
-        />
-      </v-col>
-    </v-row>
-  </v-container>
+  <div>
+    <v-conatiner v-if="loading">
+      <v-layout row justify-center class="pt-10 pb-10">
+        <v-progress-circular
+          :size="70"
+          :width="7"
+          color="rgb(0, 174, 255)"
+          indeterminate
+          v-if="loading"
+        ></v-progress-circular>
+      </v-layout>
+    </v-conatiner>
+    <v-container v-else-if="!loading">
+      <v-row>
+        <v-col cols="12" md="8">
+          <LeaderBoard
+            :groups="groups"
+            :key="groups.changes"
+            v-if="groups.groups"
+          />
+        </v-col>
+        <v-col>
+          <LeaderBoardList
+            :groups="groups"
+            :key="groups.changes"
+            v-if="groups.groups"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" md="12">
+          <AchievementList :groups="groups" :key="groups.changes" />
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
 </template>
 
 <script>
@@ -46,17 +55,15 @@ export default {
     achievements: [],
     stats: [],
     completed: false,
+    loading: true,
   }),
   async created() {
-    await this.getData();
-    await this.getAchievements();
+    await this.getAllGroups();
   },
   methods: {
-    async getData() {
-      await this.getAllGroups();
-    },
     async getAllGroups() {
       let token = this.$store.state.auth.token;
+      console.log(token);
       if (token) {
         await axios
           .get("http://127.0.0.1:8000/api/group/groups/", {
@@ -70,6 +77,7 @@ export default {
               groups: response.data,
             };
             this.groups = groups;
+            this.getAchievements();
           });
       }
     },
@@ -118,6 +126,8 @@ export default {
             group.points !== achievement.totalPoints
           ) {
             this.updateGroupPoints(group.id, achievement.totalPoints);
+          } else {
+            this.loading = false;
           }
         });
       });
@@ -143,6 +153,7 @@ export default {
               if (response.data.id === group.id) {
                 this.groups.groups[index] = response.data;
                 this.groups.changes++;
+                this.loading = false;
               }
             });
           });

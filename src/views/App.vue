@@ -7,7 +7,7 @@
         color="#00aeff"
       ></v-app-bar-nav-icon>
       <v-toolbar-title class="d-flex align-center logo" style="margin: auto">
-        <router-link to="/" class="nav-link" style="display: contents">
+        <router-link to="/leaderboard" class="nav-link" style="display: contents">
           <v-icon x-large color="#00aeff">mdi-school</v-icon>
           <h2 class="ml-1" style="color:#00aeff">LeaderBoard</h2>
         </router-link>
@@ -140,10 +140,9 @@ export default {
       this.isAuthenticated = this.$store.state.auth.isAuthenticated;
       if (fromRegister === true) {
         this.$router.push({ name: "profile" });
-        this.$router.go();
       }
       if (!fromRegister && this.isAuthenticated) {
-        this.$router.go();
+        this.$router.push({ name: "home"});
       }
     },
     async getAccount() {
@@ -159,11 +158,12 @@ export default {
           });
       }
     },
-    signOut() {
-      this.$store.commit("auth/setAuthenticationFalse");
-      sessionStorage.removeItem("token");
-      this.$router.push({ name: "home" });
-      this.$router.go();
+    async signOut() {
+      this.isAuthenticated = false;
+      this.hasToken = false;
+      await this.$store.commit("auth/setAuthenticationFalse");
+      await sessionStorage.removeItem("token");
+      await this.$router.push({ path: "/" });
     },
   },
 };

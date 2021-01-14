@@ -17,7 +17,18 @@
               <div class="caption" style="color: #00aeff">{{ i.name }}</div>
             </v-tab>
             <v-tab-item>
-              <v-card class="px-4">
+              <v-card v-if="loading">
+                <v-layout row justify-center class="pt-10 mb-10">
+                  <v-progress-circular
+                    :size="70"
+                    :width="7"
+                    color="rgb(0, 174, 255)"
+                    indeterminate
+                    v-if="loading"
+                  ></v-progress-circular>
+                </v-layout>
+              </v-card>
+              <v-card class="px-4" v-else-if="!loading">
                 <v-card-text>
                   <v-form ref="loginForm" v-model="valid" lazy-validation>
                     <v-row class="justify-center pt-4 pb-4">
@@ -85,7 +96,18 @@
               </v-card>
             </v-tab-item>
             <v-tab-item>
-              <v-card class="px-4">
+              <v-card v-if="loading">
+                <v-layout row justify-center class="pt-10 mb-10">
+                  <v-progress-circular
+                    :size="70"
+                    :width="7"
+                    color="rgb(0, 174, 255)"
+                    indeterminate
+                    v-if="loading"
+                  ></v-progress-circular>
+                </v-layout>
+              </v-card>
+              <v-card class="px-4" v-else-if="!loading">
                 <v-card-text>
                   <v-form ref="registerForm" v-model="valid" lazy-validation>
                     <v-row class="justify-center pt-4 pb-4">
@@ -237,6 +259,7 @@ export default {
     verify: "",
     loginPassword: "",
     loginEmail: "",
+    loading: false,
     loginEmailRules: [
       (v) => !!v || "Required",
       (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
@@ -298,20 +321,23 @@ export default {
       }
     },
     async logIn(payload, fromRegister) {
+      this.loading = true;
       await this.$store.dispatch("auth/getToken", payload);
       if (this.$store.state.auth.error) {
         if (this.$store.state.auth.error.message == "Network Error") {
+          this.loading = false;
           window.alert(
             this.$store.state.auth.error.message + " - Please contact support"
           );
         } else {
+          this.loading = false;
           this.logInError = true;
         }
       }
       await this.onRegister(fromRegister);
     },
     async registerAccount(GoogleUser) {
-      console.log("Registering");
+      this.loading = true;
       let payload = {};
       if (GoogleUser && GoogleUser.Mt) {
         payload = {
@@ -331,7 +357,7 @@ export default {
           last_name:
             this.lastName.substring(0, 1).toUpperCase() +
             this.lastName.substring(1).toLowerCase(),
-          user_name: this.userName
+          user_name: this.userName,
         };
       }
       await axios
@@ -349,9 +375,11 @@ export default {
             };
           }
           const fromRegister = true;
+          this.loading = false;
           this.logIn(payload, fromRegister);
         })
         .catch(() => {
+          this.loading = false;
           this.registerError = true;
         });
     },

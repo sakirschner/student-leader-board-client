@@ -33,7 +33,7 @@
     </v-card-text>
 
     <v-card-text v-else>
-        You are not assigned to a group yet
+        No group Info
     </v-card-text>
   </v-card>
 </template>

@@ -1,5 +1,19 @@
 <template>
   <v-container class="pa-8">
+    <v-dialog v-model="dialog" max-width="290">
+      <v-card>
+        <v-conatiner>
+          <v-layout row justify-center class="pt-10 pb-10">
+            <v-progress-circular
+              :size="70"
+              :width="7"
+              color="rgb(0, 174, 255)"
+              indeterminate
+            ></v-progress-circular>
+          </v-layout>
+        </v-conatiner>
+      </v-card>
+    </v-dialog>
     <v-card class="mt-16 mx-auto pt-10">
       <v-sheet
         class="v-sheet--offset mx-auto"
@@ -27,6 +41,12 @@
               item-text="user_name"
               return-object
               label="Select a student"
+              v-if="!loadingStudents"
+            />
+            <v-select
+              :items="noStudents"
+              label="Select a student"
+              v-else-if="loadingStudents"
             />
           </v-col>
         </v-row>
@@ -55,11 +75,14 @@ export default {
   },
   data: () => ({
     students: [],
+    noStudents: ["Loading Data"],
     achievements: [],
     points: [],
     groups: [],
     selectedStudent: {},
     datacollection: null,
+    dialog: false,
+    loadingStudents: true
   }),
   watch: {
     selectedStudent: function() {
@@ -85,11 +108,13 @@ export default {
               group.students.forEach((student) => {
                 this.students.push(student);
               });
+              this.loadingStudents = false;
             });
           });
       }
     },
     async getAchievements() {
+      this.dialog = true;
       let token = this.$store.state.auth.token;
       if (token) {
         await axios
@@ -181,6 +206,7 @@ export default {
           },
         ],
       };
+      this.dialog = false;
     },
   },
 };

@@ -3,7 +3,7 @@ import axios from 'axios'
 const state = () => ({
     token: "",
     isAuthenticated: false,
-    error: null
+    error: null,
 })
 
 const actions = {
@@ -12,7 +12,6 @@ const actions = {
         if (sessionToken) {
             await commit('setTokenFromSession', sessionToken);
             await commit('setAuthentication')
-
         } else {
             await axios.post('http://127.0.0.1:8000/api/user/token/', payload)
                 .then((response) => {
@@ -46,7 +45,7 @@ const mutations = {
     },
     setError(state, error) {
         state.error = error;
-    }
+    },
 }
 
 export default {
