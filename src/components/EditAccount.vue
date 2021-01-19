@@ -1,6 +1,17 @@
 <template>
   <div>
-    <v-card class="pa-4">
+    <v-card v-if="loading">
+      <v-layout row justify-center class="pt-10 pb-10">
+        <v-progress-circular
+          :size="70"
+          :width="7"
+          color="rgb(0, 174, 255)"
+          indeterminate
+          v-if="loading"
+        ></v-progress-circular>
+      </v-layout>
+    </v-card>
+    <v-card class="pa-4" v-else-if="!loading">
       <v-row>
         <v-spacer />
         <v-col cols="12" md="4">
@@ -52,11 +63,6 @@
               <v-text-field v-model="account.last_name" label="Last Name" />
             </v-col>
           </v-row>
-          <!-- <v-row>
-            <v-col cols="12" md="12">
-              <v-text-field v-model="account.email" label="Email" />
-            </v-col>
-          </v-row> -->
           <v-row>
             <v-col cols="12" md="12">
               <v-text-field v-model="account.user_name" label="Username" />
@@ -85,10 +91,8 @@
               @change="onFileChange"
             ></v-file-input>
           </v-card-text>
-
           <v-card-actions>
             <v-spacer></v-spacer>
-
             <v-btn text color="error" @click="onAvatarCancel">
               Cancel
             </v-btn>
@@ -114,6 +118,7 @@ export default {
     dialog: false,
     avatar: null,
     url: null,
+    loading: false,
   }),
   methods: {
     onFileChange(e) {
@@ -128,12 +133,11 @@ export default {
       this.$emit("clicked");
     },
     async patchAccount() {
-      console.log("here");
+      this.loading = true;
       let token = this.$store.state.auth.token;
       let payload = {
         first_name: this.$props.account.first_name,
         last_name: this.$props.account.last_name,
-        // email: this.$props.account.email,
         user_name: this.$props.account.user_name,
       };
       if (token) {
@@ -151,7 +155,7 @@ export default {
             if (this.avatar) {
               this.uploadImage();
             } else {
-                this.$emit("submitted");
+              this.$emit("submitted");
             }
           });
       }
@@ -176,7 +180,7 @@ export default {
             }
           )
           .then(() => {
-            this.$router.go();
+            this.$emit("submitted");
           });
       }
     },

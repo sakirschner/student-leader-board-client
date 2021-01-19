@@ -60,10 +60,14 @@ export default {
   async created() {
     await this.getAllGroups();
   },
+  mounted() {
+    window.setInterval(() => {
+      this.getAllGroups();
+    }, 60000);
+  },
   methods: {
     async getAllGroups() {
       let token = this.$store.state.auth.token;
-      console.log(token);
       if (token) {
         await axios
           .get("http://127.0.0.1:8000/api/group/groups/", {
@@ -83,6 +87,8 @@ export default {
     },
     getAchievements() {
       const token = this.$store.state.auth.token;
+      let updatedAchievements = [];
+      let itemsProcessed = 0;
       this.groups.groups.forEach((group) => {
         let studentIds = [];
         group.students.forEach((student) => {
@@ -105,32 +111,40 @@ export default {
                   points += achievement.achievement.points;
                 }
               });
-              let groupAchievements = {
-                groupId: group.id,
-                groupName: group.name,
-                totalPoints: points,
-                achievements: response.data,
-              };
-              this.achievements.push(groupAchievements);
-              this.compareGroupPoints();
+              const groupAchievements = JSON.parse(
+                JSON.stringify({
+                  groupId: group.id,
+                  groupName: group.name,
+                  totalPoints: points,
+                  achievements: response.data,
+                })
+              );
+              updatedAchievements.push(groupAchievements);
+              itemsProcessed++;
+              if (itemsProcessed === this.groups.groups.length) {
+                this.achievements = JSON.parse(
+                  JSON.stringify(updatedAchievements)
+                );
+                this.completed = true;
+                this.loading = false;
+                this.compareGroupPoints();
+              }
             });
         }
       });
-      this.completed = true;
     },
     async compareGroupPoints() {
       this.groups.groups.forEach((group) => {
-        this.achievements.forEach((achievement) => {
-          if (
-            group.id === achievement.groupId &&
-            group.points !== achievement.totalPoints
-          ) {
-            this.updateGroupPoints(group.id, achievement.totalPoints);
-          } else {
-            this.loading = false;
-          }
+          this.achievements.forEach((achievement) => {
+            if (
+              group.id === achievement.groupId &&
+              group.points !== achievement.totalPoints
+            ) {
+              this.updateGroupPoints(group.id, achievement.totalPoints);
+            }
         });
       });
+      this.loading = false;
     },
     async updateGroupPoints(groupId, points) {
       const token = this.$store.state.auth.token;

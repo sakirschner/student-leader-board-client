@@ -14,7 +14,6 @@ export default {
   },
   methods: {
     getGoogleAuth() {
-      console.log("here");
       this.$gAuth.signIn().then((GoogleUser) => {
         this.$emit("submitted", GoogleUser);
       });

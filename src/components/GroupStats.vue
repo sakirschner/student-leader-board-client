@@ -17,8 +17,32 @@
         <v-row v-if="!stats.length">
           No achievements yet
         </v-row>
-        </v-card-text>
-        <v-card-text v-else>
+        <v-row>
+          <v-col cols="12" md="3">
+            <v-card color="#EA6400" dark elevation="0">
+              <v-card-title>
+                Place
+              </v-card-title>
+              <v-card-text>
+                <span class="headline"
+                  >{{ foundGroup.index + 1 }}{{ foundGroup.group.suffix }}</span
+                >
+              </v-card-text>
+            </v-card>
+          </v-col>
+          <v-col cols="12" md="3">
+            <v-card color="#00aeff" dark elevation="0">
+              <v-card-title>
+                Total Points
+              </v-card-title>
+              <v-card-text>
+                <span class="headline">{{ totalPoints }}</span>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-card-text>
+      <v-card-text v-else>
         <v-row>
           <v-col cols="12" md="3">
             <v-card color="#EA6400" dark elevation="0">

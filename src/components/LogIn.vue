@@ -294,6 +294,7 @@ export default {
       this.$emit("submitted", fromRegister);
     },
     async gLogIn(GoogleUser) {
+      console.log("here")
       this.logInError = false;
       this.registerError = false;
       this.$store.commit("auth/setError", null);
@@ -302,6 +303,7 @@ export default {
         password: "Dummy!1951",
       };
       const fromRegister = false;
+      this.loading = true;
       await this.logIn(payload, fromRegister);
     },
     async validate() {

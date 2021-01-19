@@ -173,7 +173,7 @@ export default {
     },
     onSaveClick() {
       this.edit = !this.edit;
-      this.$router.go();
+      this.getData();
     },
   },
 };

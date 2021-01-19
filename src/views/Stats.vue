@@ -82,7 +82,7 @@ export default {
     selectedStudent: {},
     datacollection: null,
     dialog: false,
-    loadingStudents: true
+    loadingStudents: true,
   }),
   watch: {
     selectedStudent: function() {
@@ -104,12 +104,16 @@ export default {
             },
           })
           .then((response) => {
-            response.data.forEach((group) => {
-              group.students.forEach((student) => {
-                this.students.push(student);
+            if (response.data.length) {
+              response.data.forEach((group) => {
+                group.students.forEach((student) => {
+                  this.students.push(student);
+                });
+                this.loadingStudents = false;
               });
+            } else {
               this.loadingStudents = false;
-            });
+            }
           });
       }
     },
@@ -151,30 +155,27 @@ export default {
       }
     },
     organizeStats() {
-      let stats = [[], [], [], [], [], [], []];
+      let stats = [[], [], [], [], [], []];
       let points = [];
       this.achievements.forEach((stat) => {
         switch (moment(stat.created_at).week()) {
-          case 3:
+          case 5:
             stats[0].push(stat);
             break;
-          case 4:
+          case 6:
             stats[1].push(stat);
             break;
-          case 5:
+          case 7:
             stats[2].push(stat);
             break;
-          case 6:
+          case 8:
             stats[3].push(stat);
             break;
-          case 7:
+          case 9:
             stats[4].push(stat);
             break;
-          case 8:
+          case 10:
             stats[5].push(stat);
-            break;
-          case 9:
-            stats[6].push(stat);
             break;
         }
       });
@@ -188,7 +189,7 @@ export default {
         points.push(totalPoints);
       });
       this.datacollection = {
-        labels: ["1/11", "1/18", "1/25", "2/1", "2/8", "2/12", "2/22"],
+        labels: ["1/25", "2/1", "2/8", "2/12", "2/22", "3/1"],
         datasets: [
           {
             label: "Total Points Per Week",
