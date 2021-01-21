@@ -76,6 +76,9 @@ export default {
             },
           })
           .then((response) => {
+            if (!response.data.length) {
+              this.loading = false;
+            }
             let groups = {
               changes: 0,
               groups: response.data,

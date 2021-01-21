@@ -17,14 +17,14 @@
         <v-row v-if="!stats.length">
           No achievements yet
         </v-row>
-        <v-row>
+        <v-row v-if="foundGroup.group">
           <v-col cols="12" md="3">
             <v-card color="#EA6400" dark elevation="0">
               <v-card-title>
                 Place
               </v-card-title>
               <v-card-text>
-                <span class="headline"
+                <span class="headline" 
                   >{{ foundGroup.index + 1 }}{{ foundGroup.group.suffix }}</span
                 >
               </v-card-text>
