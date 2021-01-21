@@ -139,6 +139,7 @@ export default {
       await this.getAccount();
       this.isAuthenticated = this.$store.state.auth.isAuthenticated;
       if (fromRegister === true) {
+        this.isAuthenticated = true;
         this.$router.push({ name: "profile" });
       }
       if (!fromRegister && this.isAuthenticated) {
