@@ -10,7 +10,7 @@ This application is built with [vue.js](https://vuejs.org/) using components fro
 ### Get Started
 This application is Dockerized so simply run the following command to start a local server.
 ```
-docker-compose-up
+docker-compose up
 ```
 
 ### Back End Services
