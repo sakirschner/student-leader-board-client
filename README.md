@@ -1,7 +1,7 @@
 # Student LeaderBoard Client
 This is the front end for a leader board application that tracks achievements of students in a class room setting in order to gameify the learning experience and encourage students to contribute in class.
 
-![app-image](images/app-image.png)
+![app-image](/images/app-image.png)
 
 This application is built with [vue.js](https://vuejs.org/) using components from [vuetify](https://vuetifyjs.com)
 
